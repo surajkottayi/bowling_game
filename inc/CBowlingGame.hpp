@@ -1,5 +1,4 @@
-#ifndef CBowlingGame_HPP
-#define CBowlingGame_HPP
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -216,4 +215,3 @@ namespace bowling_game
         mutable uint32_t m_FinalScore;
     };
 }
-#endif // CBowlingGame_HPP
