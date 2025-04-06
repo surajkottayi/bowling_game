@@ -32,12 +32,17 @@ public:
 
     void roll(int pins);
     void printFirstRaw(int &liRollIndex) const;
-    int score() const;
     void printScore() const;
     void printFrameInfo(int &liRollIndex) const;
     void printSecondRaw(int &liRollIndex, int &currentScore) const;
     int getCurrentFrameIndex() const;
     void clear();
+    bool &isAnotherRoll() const;
+    void setisAnotherRoll(bool) const;
+
+    void setisAnotherRollHandled(bool lbRoll) const;
+    uint32_t& getFinalScore() ;
+    void setFinalScore(uint32_t&);
 
 private:
     int strikeBonus(int rollIndex) const;
@@ -56,6 +61,9 @@ private:
 
 private:
     std::vector<uint16_t> m_vRolls;
+    mutable bool m_IsAnotherRoll = false;
+    mutable bool m_IsAnotherRollHandled = false;
+    mutable uint32_t m_FinalScore;
 };
 
 #endif // CBowlingGame_HPP

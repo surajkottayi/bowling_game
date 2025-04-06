@@ -21,7 +21,7 @@ void CBowlingGame::printFirstRaw(int &liRollIndex) const
 {
     for (int iFrameNo = 0; iFrameNo < MAX_NO_FRAMES; ++iFrameNo)
     {
-        if (iFrameNo < 9)
+        if (iFrameNo < 9) // Frames 1 to 9
         {
             if (liRollIndex >= m_vRolls.size())
             {
@@ -29,28 +29,29 @@ void CBowlingGame::printFirstRaw(int &liRollIndex) const
                 continue;
             }
 
-            if (isStrike(liRollIndex))
+            int first = m_vRolls[liRollIndex];
+            if (first == 10)
             {
-                std::cout << BOLDGREEN << "  X  " << RESET << "|";
+                std::cout << "  " << BOLDGREEN << "X" << RESET << "  |";
                 liRollIndex += 1;
             }
             else if (liRollIndex + 1 < m_vRolls.size())
             {
-                int first = m_vRolls[liRollIndex];
                 int second = m_vRolls[liRollIndex + 1];
                 std::string secondDisplay = (first + second == 10) ? "/" : std::to_string(second);
-                std::cout << " " << std::setw(2) << first << "|" << GREEN << secondDisplay << RESET << " |";
+                std::cout << std::setw(2) << first << "|" << GREEN << secondDisplay << RESET << " |";
                 liRollIndex += 2;
             }
             else
             {
-                std::cout << " " << std::setw(2) << m_vRolls[liRollIndex] << "|   |";
+                std::cout << std::setw(2) << first << "|   |";
                 liRollIndex += 1;
             }
         }
-        else // 10th frame
+        else // 10th frame (can have 3 rolls)
         {
             std::string rolls[3] = {" ", " ", " "};
+
             for (int i = 0; i < 3 && liRollIndex + i < m_vRolls.size(); ++i)
             {
                 int val = m_vRolls[liRollIndex + i];
@@ -67,8 +68,9 @@ void CBowlingGame::printFirstRaw(int &liRollIndex) const
                     rolls[i] = std::to_string(val);
                 }
             }
-            std::cout << " " << rolls[0] << "|" << rolls[1] << "|" << rolls[2] << " |";
-            liRollIndex += 3;
+
+            std::cout << std::setw(2) << rolls[0] << "|" << rolls[1] << "|" << rolls[2] << " |";
+            liRollIndex += std::min(3, static_cast<int>(m_vRolls.size()) - liRollIndex);
         }
     }
 }
@@ -134,15 +136,21 @@ void CBowlingGame::printSecondRaw(int &liRollIndex, int &currentScore) const
         }
         else // 10th frame
         {
-            // int frameScore = 0;
-            // int extraRolls = std::min(3, static_cast<int>(m_vRolls.size() - liRollIndex));
-            // for (int i = 0; i < extraRolls; ++i)
-            // {
-            //     frameScore += m_vRolls[liRollIndex + i];
-            // }
-            // currentScore += frameScore;
-            // std::cout << std::setw(5) << currentScore << "|";
-            // liRollIndex += extraRolls;
+            if (false == m_IsAnotherRoll)
+            {
+                if (isStrike(liRollIndex) || isSpare(liRollIndex) && !m_IsAnotherRollHandled)
+                {
+                    setisAnotherRoll(true);
+                }
+            }
+            else
+            {
+                setisAnotherRoll(false);
+                int frameScore = m_vRolls[liRollIndex] + m_vRolls[liRollIndex + 1] + m_vRolls[liRollIndex + 2];
+                currentScore += frameScore;
+                std::cout << std::setw(5) << BOLDMAGENTA << currentScore << RESET << "     |";
+                m_FinalScore = currentScore;
+            }
         }
     }
 }
@@ -155,6 +163,30 @@ bool CBowlingGame::isSpare(int rollIndex) const
 {
     return rollIndex + 1 < m_vRolls.size() &&
            m_vRolls[rollIndex] + m_vRolls[rollIndex + 1] == 10;
+}
+
+bool &CBowlingGame::isAnotherRoll() const
+{
+    return m_IsAnotherRoll;
+}
+
+void CBowlingGame::setisAnotherRoll(bool lbRoll) const
+{
+    m_IsAnotherRoll = lbRoll;
+}
+void CBowlingGame::setisAnotherRollHandled(bool lbRoll) const
+{
+    m_IsAnotherRollHandled = lbRoll;
+}
+
+uint32_t& CBowlingGame::getFinalScore() 
+{
+    return m_FinalScore;
+}
+
+void CBowlingGame::setFinalScore(uint32_t &lScore)
+{
+    m_FinalScore = lScore;
 }
 
 int CBowlingGame::strikeBonus(int rollIndex) const
@@ -179,19 +211,19 @@ void CBowlingGame::printScore() const
     std::cout << "Frame Info:\n";
     printFrameInfo(liRollIndex);
 
-    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+\n|";
+    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n|";
     liRollIndex = 0;
     // Print the first raw :  frame,roll score
     printFirstRaw(liRollIndex);
 
-    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+\n|";
+    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n|";
 
     liRollIndex = 0;
     int currentScore = 0;
     // Print the second raw :  cumilative score/ total score
     printSecondRaw(liRollIndex, currentScore);
 
-    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+\n";
+    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n";
 }
 
 void CBowlingGame::printFrameInfo(int &liRollIndex) const
@@ -254,4 +286,6 @@ void CBowlingGame::clear()
 {
     m_vRolls.clear();
     std::system("clear");
+    m_IsAnotherRoll = false;
+    m_IsAnotherRollHandled = false;
 }

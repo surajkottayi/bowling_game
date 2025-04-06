@@ -65,8 +65,8 @@ int main(int argc, char const *argv[])
     int lRollCount = 1;
     while (true)
     {
-        showSpinner("Loading game", 1000, 150);
-        showDotAnimation("Preparing score board", 1000, 400);
+        showSpinner("Loading game", 1000, 100);
+        showDotAnimation("Preparing score board", 1000, 100);
         std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std ::endl;
         std::cout
             << BOLDYELLOW << "\t\t\t\tBowling Game Started! Enter pins for each roll (0-10):" << RESET << std ::endl;
@@ -76,7 +76,29 @@ int main(int argc, char const *argv[])
             int liFrameNo = lpCBwlngGame->getCurrentFrameIndex();
             if (liFrameNo >= MAX_NO_FRAMES)
             {
-                break;
+                if (liFrameNo == MAX_NO_FRAMES && lpCBwlngGame->isAnotherRoll())
+                {
+
+                    // lpCBwlngGame->setisAnotherRoll(false);
+                    lpCBwlngGame->setisAnotherRollHandled(true);
+                    std::cout << "Another roll: ";
+                    std::cout << "Roll 3: ";
+                    int liPin3;
+                    std::cin >> liPin3;
+
+                    if (liPin3 < 0 || liPin3 > 10)
+                    {
+                        std::cout << "Invalid pin count. Try again.\n";
+                        continue;
+                    }
+
+                    lpCBwlngGame->roll(liPin3);
+                }
+                else
+                {
+
+                    break;
+                }
             }
             else
             {
@@ -113,7 +135,8 @@ int main(int argc, char const *argv[])
         }
         std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std ::endl;
 
-        std::cout << BOLDYELLOW << "\t\t\t\tGame Over !\n ";
+        std::cout << BOLDYELLOW << "\t\t\t\t\t\t\tGame Over !\n ";
+        std::cout << BOLDGREEN << "\t\t\t\t\t\t\tFinal Score is :" << lpCBwlngGame->getFinalScore() << RESET << std::endl;
         std::cout
             << BOLDRED << "*********************************************************************************************************************" << RESET << std ::endl;
 
