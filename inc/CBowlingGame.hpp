@@ -199,10 +199,10 @@ private:
     std::vector<uint16_t> m_vRolls;
 
     /// Flag to indicate another roll is needed.
-    mutable bool m_IsAnotherRoll = false;
+    mutable bool m_IsAnotherRoll;
 
     /// Flag to indicate whether the "another roll" state has been handled.
-    mutable bool m_IsAnotherRollHandled = false;
+    mutable bool m_IsAnotherRollHandled;
 
     /// Final score of the game.
     mutable uint32_t m_FinalScore;

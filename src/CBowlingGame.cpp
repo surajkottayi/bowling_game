@@ -6,6 +6,9 @@ void CBowlingGame::init()
 {
     showSpinner("Loading game", 1000, 100);
     showDotAnimation("Preparing score board", 1000, 100);
+    setisAnotherRoll(false);
+    setisAnotherRollHandled(false);
+    m_vRolls.clear();
 }
 void CBowlingGame::roll(int pins)
 {
