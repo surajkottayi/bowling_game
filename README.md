@@ -20,4 +20,9 @@ mkdir build
 cd build
 cmake ..
 make
-./BowlingGame
+
+There are two modes
+1. To play the game
+    ./BowlingGame
+2. To test the game
+    ./BowlingGame --mode=test

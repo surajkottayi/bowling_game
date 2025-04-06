@@ -1,6 +1,5 @@
 #include <iostream>
 #include "CBowlingGame.hpp"
-
 /**
  * @brief Starts a single round of bowling (1 or 2 or 3 rolls).
  *
@@ -19,44 +18,72 @@ void startBowling(std::shared_ptr<CBowlingGame> &lpCBwlngGame, int &retFlag);
  *
  * @return int Exit status code (0 for success).
  */
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
     std::shared_ptr<CBowlingGame> lpCBwlngGame = CBowlingGame::getInstance();
-
-    while (true)
+    if (argc > 1)
     {
-        lpCBwlngGame->init();
+        std::string lstrArgFirst(argv[1]);
+        if (lstrArgFirst == "--mode=test")
+        {
+            std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+            std::cout << BOLDRED << "\t\t\t\tTest Mode : Bowling Game Started! Enter pins for each roll (0-10):" << RESET << std::endl;
+            std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
 
-        std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
-        std::cout << BOLDYELLOW << "\t\t\t\tBowling Game Started! Enter pins for each roll (0-10):" << RESET << std::endl;
-        std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+            lpCBwlngGame->init();
+            
+            // Sample test input
+            std::vector<int> lvTestRolls = {
+                1, 4, 4, 5, 6, 4, 5, 5, 10, 0, 1, 7, 3, 6, 4, 10, 2, 8, 6};
 
-        // Frame-by-frame bowling loop
+            for (int pins : lvTestRolls)
+            {
+                lpCBwlngGame->roll(pins);
+            }
+            lpCBwlngGame->printScore(lpCBwlngGame->getCurrentFrameIndex() - 1);
+            std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+            std::cout << BOLDYELLOW << "\t\t\t\t\t\tGame Over !\n";
+            std::cout << BOLDGREEN << "\t\t\t\t\t\tFinal Score is :" << lpCBwlngGame->getFinalScore() << RESET << std::endl;
+            std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+        }
+    }
+    else
+    {
+
         while (true)
         {
-            int retFlag;
-            startBowling(lpCBwlngGame, retFlag);
-            if (retFlag == 2)
-                break; // Game over
-            if (retFlag == 3)
-                continue; // Retry input
+            lpCBwlngGame->init();
+
+            std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+            std::cout << BOLDYELLOW << "\t\t\t\tBowling Game Started! Enter pins for each roll (0-10):" << RESET << std::endl;
+            std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+
+            // Frame-by-frame bowling loop
+            while (true)
+            {
+                int retFlag;
+                startBowling(lpCBwlngGame, retFlag);
+                if (retFlag == 2)
+                    break; // Game over
+                if (retFlag == 3)
+                    continue; // Retry input
+            }
+
+            std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+            std::cout << BOLDYELLOW << "\t\t\t\t\t\tGame Over !\n";
+            std::cout << BOLDGREEN << "\t\t\t\t\t\tFinal Score is :" << lpCBwlngGame->getFinalScore() << RESET << std::endl;
+            std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+
+            // Replay prompt
+            if (!lpCBwlngGame->getYes("Would you like to continue?"))
+            {
+                std::cout << BOLDYELLOW << "\nExiting...Hope u had a good time !\n";
+                break;
+            }
+
+            lpCBwlngGame->clear();
         }
-
-        std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
-        std::cout << BOLDYELLOW << "\t\t\t\t\t\t\tGame Over !\n";
-        std::cout << BOLDGREEN << "\t\t\t\t\t\t\tFinal Score is :" << lpCBwlngGame->getFinalScore() << RESET << std::endl;
-        std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
-
-        // Replay prompt
-        if (!lpCBwlngGame->getYes("Would you like to continue?"))
-        {
-            std::cout << BOLDYELLOW << "\nExiting...Hope u had a good time !\n";
-            break;
-        }
-
-        lpCBwlngGame->clear();
     }
-
     return 0;
 }
 

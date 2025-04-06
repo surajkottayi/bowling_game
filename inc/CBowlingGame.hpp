@@ -45,6 +45,8 @@ public:
      */
     [[nodiscard]] static std::shared_ptr<CBowlingGame> getInstance();
 
+    int getFinalScore() const;
+
     /**
      * @brief Initializes the game.
      */
@@ -60,12 +62,6 @@ public:
      * @return Current frame index.
      */
     int getCurrentFrameIndex() const;
-
-    /**
-     * @brief Returns reference to the final score.
-     * @return Reference to final score.
-     */
-    uint32_t &getFinalScore();
 
     /**
      * @brief Prompts user for a yes/no input.

@@ -180,11 +180,6 @@ void CBowlingGame::setisAnotherRollHandled(bool lbRoll) const
     m_IsAnotherRollHandled = lbRoll;
 }
 
-uint32_t &CBowlingGame::getFinalScore()
-{
-    return m_FinalScore;
-}
-
 void CBowlingGame::setFinalScore(uint32_t &&lScore)
 {
     m_FinalScore = lScore;
@@ -374,4 +369,42 @@ std::shared_ptr<CBowlingGame> CBowlingGame::getInstance()
         m_pCBwlngGame = std::shared_ptr<CBowlingGame>(new CBowlingGame());
     }
     return m_pCBwlngGame;
+}
+
+int CBowlingGame::getFinalScore() const
+{
+    int score = 0;
+    int rollIndex = 0;
+
+    for (int frame = 0; frame < MAX_NO_FRAMES; ++frame)
+    {
+        if (rollIndex >= m_vRolls.size())
+            break;
+
+        if (m_vRolls[rollIndex] == 10)
+        {
+            // Strike
+            int bonus1 = (rollIndex + 1 < m_vRolls.size()) ? m_vRolls[rollIndex + 1] : 0;
+            int bonus2 = (rollIndex + 2 < m_vRolls.size()) ? m_vRolls[rollIndex + 2] : 0;
+            score += 10 + bonus1 + bonus2;
+            rollIndex += 1;
+        }
+        else if (rollIndex + 1 < m_vRolls.size() && m_vRolls[rollIndex] + m_vRolls[rollIndex + 1] == 10)
+        {
+            // Spare
+            int bonus = (rollIndex + 2 < m_vRolls.size()) ? m_vRolls[rollIndex + 2] : 0;
+            score += 10 + bonus;
+            rollIndex += 2;
+        }
+        else
+        {
+            // Open frame
+            int roll1 = m_vRolls[rollIndex];
+            int roll2 = (rollIndex + 1 < m_vRolls.size()) ? m_vRolls[rollIndex + 1] : 0;
+            score += roll1 + roll2;
+            rollIndex += 2;
+        }
+    }
+
+    return score;
 }
