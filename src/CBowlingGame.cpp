@@ -1,5 +1,6 @@
 
 #include "CBowlingGame.hpp"
+using namespace bowling_game;
 std::shared_ptr<CBowlingGame> CBowlingGame::m_pCBwlngGame = nullptr;
 
 void CBowlingGame::init()
@@ -407,4 +408,32 @@ int CBowlingGame::getFinalScore() const
     }
 
     return score;
+}
+
+void CBowlingGame::printGameBegin(const GameMode &lMode)
+{
+    std::string lstrMode = "";
+    std::string lstrColor;
+    if (lMode == GameMode::GM_TEST)
+    {
+        lstrColor = BOLDRED;
+        lstrMode = "Test Mode";
+    }
+    else if (lMode == GameMode::GM_NORMAL)
+    {
+        lstrColor = BOLDYELLOW;
+        lstrMode = "";
+    }
+
+    std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+    std::cout << lstrColor << "\t\t\t\t " << lstrMode << " Bowling Game Started! Enter pins for each roll (0-10):" << RESET << std::endl;
+    std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+}
+
+void CBowlingGame::printGameOver(const GameMode &lMode)
+{
+    std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
+    std::cout << BOLDYELLOW << "\t\t\t\t\t\tGame Over !\n";
+    std::cout << BOLDGREEN << "\t\t\t\t\t\tFinal Score is :" << getFinalScore() << RESET << std::endl;
+    std::cout << BOLDRED << "*********************************************************************************************************************" << RESET << std::endl;
 }
