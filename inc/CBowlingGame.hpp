@@ -112,7 +112,7 @@ private:
      * @brief Sets the final score.
      * @param score Reference to score to set.
      */
-    void setFinalScore(uint32_t &score);
+    void setFinalScore(uint32_t &&score);
 
     /**
      * @brief Sets the flag indicating if another roll is needed.

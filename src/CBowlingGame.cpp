@@ -8,6 +8,7 @@ void CBowlingGame::init()
     showDotAnimation("Preparing score board", 1000, 100);
     setisAnotherRoll(false);
     setisAnotherRollHandled(false);
+    setFinalScore(0);
     m_vRolls.clear();
 }
 void CBowlingGame::roll(int pins)
@@ -184,7 +185,7 @@ uint32_t &CBowlingGame::getFinalScore()
     return m_FinalScore;
 }
 
-void CBowlingGame::setFinalScore(uint32_t &lScore)
+void CBowlingGame::setFinalScore(uint32_t &&lScore)
 {
     m_FinalScore = lScore;
 }
@@ -310,10 +311,11 @@ int CBowlingGame::getCurrentFrameIndex() const
 
 void CBowlingGame::clear()
 {
-    m_vRolls.clear();
     std::system("clear");
-    m_IsAnotherRoll = false;
-    m_IsAnotherRollHandled = false;
+    m_vRolls.clear();
+    setisAnotherRoll(false);
+    setisAnotherRollHandled(false);
+    setFinalScore(0);
 }
 
 void CBowlingGame::showSpinner(const std::string &message, int durationMs, int intervalMs)
