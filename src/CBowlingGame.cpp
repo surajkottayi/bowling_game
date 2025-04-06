@@ -134,15 +134,15 @@ void CBowlingGame::printSecondRaw(int &liRollIndex, int &currentScore) const
         }
         else // 10th frame
         {
-            int frameScore = 0;
-            int extraRolls = std::min(3, static_cast<int>(m_vRolls.size() - liRollIndex));
-            for (int i = 0; i < extraRolls; ++i)
-            {
-                frameScore += m_vRolls[liRollIndex + i];
-            }
-            currentScore += frameScore;
-            std::cout << std::setw(5) << currentScore << "|";
-            liRollIndex += extraRolls;
+            // int frameScore = 0;
+            // int extraRolls = std::min(3, static_cast<int>(m_vRolls.size() - liRollIndex));
+            // for (int i = 0; i < extraRolls; ++i)
+            // {
+            //     frameScore += m_vRolls[liRollIndex + i];
+            // }
+            // currentScore += frameScore;
+            // std::cout << std::setw(5) << currentScore << "|";
+            // liRollIndex += extraRolls;
         }
     }
 }
