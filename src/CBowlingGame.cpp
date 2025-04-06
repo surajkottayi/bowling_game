@@ -298,7 +298,7 @@ int CBowlingGame::getCurrentFrameIndex() const
 {
     int liFrameNo = 0;
     int liRollIndex = 0;
-    while (liRollIndex < m_vRolls.size() && liFrameNo < 10)
+    while (liRollIndex < m_vRolls.size() && liFrameNo < MAX_NO_FRAMES)
     {
         if (isStrike(liRollIndex))
             liRollIndex += 1;

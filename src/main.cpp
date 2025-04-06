@@ -60,6 +60,34 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
+// Function to safely read integer input within range [minVal, maxVal]
+int getValidatedInput(const std::string &lstrPrompt, int lMinVal, int lMaxVal)
+{
+    int liValue;
+    while (true)
+    {
+        std::cout << lstrPrompt;
+        std::cin >> liValue;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();                                                   // Clear fail state
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard bad input
+            std::cout << "Invalid input. Please enter a number between " << lMinVal << " and " << lMaxVal << ".\n";
+            continue;
+        }
+
+        if (liValue < lMinVal || liValue > lMaxVal)
+        {
+            std::cout << "Invalid pin count. Please enter a number between " << lMinVal << " and " << lMaxVal << ".\n";
+            continue;
+        }
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard any remaining input
+        return liValue;
+    }
+}
+
 void startBowling(std::shared_ptr<CBowlingGame> &lpCBwlngGame, int &retFlag)
 {
     retFlag = 1;
@@ -71,18 +99,7 @@ void startBowling(std::shared_ptr<CBowlingGame> &lpCBwlngGame, int &retFlag)
         if ((MAX_NO_FRAMES == liFrameNo) && lpCBwlngGame->isAnotherRoll())
         {
             lpCBwlngGame->setisAnotherRollHandled(true);
-            std::cout << "Another roll: ";
-            std::cout << "Roll 3: ";
-            int liPin3;
-            std::cin >> liPin3;
-
-            if (liPin3 < 0 || liPin3 > 10)
-            {
-                std::cout << "Invalid pin count. Try again.\n";
-                retFlag = 3;
-                return;
-            }
-
+            int liPin3 = getValidatedInput("Roll 3: ", 0, 10);
             lpCBwlngGame->roll(liPin3);
         }
         else
@@ -94,34 +111,14 @@ void startBowling(std::shared_ptr<CBowlingGame> &lpCBwlngGame, int &retFlag)
     else
     {
         // --- Roll 1 ---
-        std::cout << "Roll 1: ";
-        int liPin1;
-        std::cin >> liPin1;
-
-        if (liPin1 < 0 || liPin1 > 10)
-        {
-            std::cout << "Invalid pin count. Try again.\n";
-            retFlag = 3;
-            return;
-        }
-
+        int liPin1 = getValidatedInput("Roll 1: ", 0, 10);
         lpCBwlngGame->roll(liPin1);
 
         // --- Roll 2 (if not a strike) ---
         if (liPin1 != 10)
         {
-            std::cout << "Roll 2: ";
-            int liPin2;
-            std::cin >> liPin2;
-
-            if (liPin1 + liPin2 > 10 || liPin2 < 0)
-            {
-                std::cout << "Invalid pin total. Try again.\n";
-                lpCBwlngGame->roll(0); // Dummy roll for clean state
-                retFlag = 3;
-                return;
-            }
-
+            int maxRoll2 = 10 - liPin1;
+            int liPin2 = getValidatedInput("Roll 2: ", 0, maxRoll2);
             lpCBwlngGame->roll(liPin2);
         }
     }
