@@ -1,17 +1,12 @@
 
 #include "CBowlingGame.hpp"
-
 std::shared_ptr<CBowlingGame> CBowlingGame::m_pCBwlngGame = nullptr;
 
-std::shared_ptr<CBowlingGame> CBowlingGame::getInstance()
+void CBowlingGame::init()
 {
-    if (!m_pCBwlngGame)
-    {
-        m_pCBwlngGame = std::shared_ptr<CBowlingGame>(new CBowlingGame());
-    }
-    return m_pCBwlngGame;
+    showSpinner("Loading game", 1000, 100);
+    showDotAnimation("Preparing score board", 1000, 100);
 }
-
 void CBowlingGame::roll(int pins)
 {
     m_vRolls.push_back(pins);
@@ -77,6 +72,7 @@ void CBowlingGame::printFirstRaw(int &liRollIndex) const
 
 void CBowlingGame::printSecondRaw(int &liRollIndex, int &currentScore) const
 {
+    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n|";
     for (int iFrameNo = 0; iFrameNo < MAX_NO_FRAMES; ++iFrameNo)
     {
         if (liRollIndex >= m_vRolls.size())
@@ -153,6 +149,7 @@ void CBowlingGame::printSecondRaw(int &liRollIndex, int &currentScore) const
             }
         }
     }
+    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n";
 }
 bool CBowlingGame::isStrike(int liRollIndex) const
 {
@@ -179,7 +176,7 @@ void CBowlingGame::setisAnotherRollHandled(bool lbRoll) const
     m_IsAnotherRollHandled = lbRoll;
 }
 
-uint32_t& CBowlingGame::getFinalScore() 
+uint32_t &CBowlingGame::getFinalScore()
 {
     return m_FinalScore;
 }
@@ -204,35 +201,38 @@ int CBowlingGame::sumOfBallsInFrame(int rollIndex) const
     return (rollIndex + 1 < m_vRolls.size() ? m_vRolls[rollIndex] + m_vRolls[rollIndex + 1] : m_vRolls[rollIndex]);
 }
 
-void CBowlingGame::printScore() const
+void CBowlingGame::printScore(int liFrameNo) const
 {
 
     int liRollIndex = 0;
     std::cout << "Frame Info:\n";
-    printFrameInfo(liRollIndex);
+    printFrameInfo(liFrameNo, liRollIndex);
 
-    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n|";
     liRollIndex = 0;
     // Print the first raw :  frame,roll score
     printFirstRaw(liRollIndex);
-
-    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n|";
 
     liRollIndex = 0;
     int currentScore = 0;
     // Print the second raw :  cumilative score/ total score
     printSecondRaw(liRollIndex, currentScore);
-
-    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n";
 }
 
-void CBowlingGame::printFrameInfo(int &liRollIndex) const
+void CBowlingGame::printFrameInfo(int liFrameNo, int &liRollIndex) const
 {
     for (int iFrameNo = 0; iFrameNo < MAX_NO_FRAMES; ++iFrameNo)
     {
-        std::cout << "Frame " << (iFrameNo + 1) << ": ";
+        if (iFrameNo == liFrameNo)
+        {
+            std::cout << BOLDBLUE << "Frame " << (iFrameNo + 1) << RESET << ": ";
+        }
+        else
+        {
 
-        if (iFrameNo < 9)
+            std::cout << "Frame " << (iFrameNo + 1) << ": ";
+        }
+
+        if (iFrameNo < (MAX_NO_FRAMES - 1))
         {
             if (liRollIndex < m_vRolls.size())
             {
@@ -257,29 +257,52 @@ void CBowlingGame::printFrameInfo(int &liRollIndex) const
         }
         else // Frame 10
         {
-            for (int i = 0; i < 3 && liRollIndex + i < m_vRolls.size(); ++i)
+            for (int iIndex = 0; iIndex < 3 && liRollIndex + iIndex < m_vRolls.size(); ++iIndex)
             {
-                std::cout << "Roll " << (i + 1) << " = " << m_vRolls[liRollIndex + i] << ", ";
+                std::cout << "Roll " << (iIndex + 1) << " = " << m_vRolls[liRollIndex + iIndex] << ", ";
             }
             liRollIndex += 3;
         }
 
         std::cout << std::endl;
     }
+    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n";
+
+    // Print frame numbers
+    std::cout << "|";
+    for (int iFrameNo = 1; iFrameNo <= MAX_NO_FRAMES; ++iFrameNo)
+    {
+        if (iFrameNo == liFrameNo + 1)
+        {
+            if (iFrameNo < MAX_NO_FRAMES)
+                std::cout << BOLDBLUE << "  " << iFrameNo << RESET << "  |";
+            else
+                std::cout << BOLDBLUE << "  " << std::setw(2) << iFrameNo << RESET << "   |"; // 10th frame needs more spacing
+        }
+        else
+        {
+            if (iFrameNo < MAX_NO_FRAMES)
+                std::cout << "  " << iFrameNo << "  |";
+            else
+                std::cout << "  " << std::setw(2) << iFrameNo << "   |"; // 10th fr
+        }
+    }
+
+    std::cout << "\n+-----+-----+-----+-----+-----+-----+-----+-----+-----+-------+-------+\n|" << RESET;
 }
 int CBowlingGame::getCurrentFrameIndex() const
 {
-    int frame = 0;
-    int rollIndex = 0;
-    while (rollIndex < m_vRolls.size() && frame < 10)
+    int liFrameNo = 0;
+    int liRollIndex = 0;
+    while (liRollIndex < m_vRolls.size() && liFrameNo < 10)
     {
-        if (isStrike(rollIndex))
-            rollIndex += 1;
+        if (isStrike(liRollIndex))
+            liRollIndex += 1;
         else
-            rollIndex += 2;
-        frame++;
+            liRollIndex += 2;
+        liFrameNo++;
     }
-    return frame;
+    return liFrameNo;
 }
 
 void CBowlingGame::clear()
@@ -288,4 +311,62 @@ void CBowlingGame::clear()
     std::system("clear");
     m_IsAnotherRoll = false;
     m_IsAnotherRollHandled = false;
+}
+
+void CBowlingGame::showSpinner(const std::string &message, int durationMs, int intervalMs)
+{
+    const char spinner[] = {'|', '/', '-', '\\'};
+    int spinnerIndex = 0;
+    int totalSteps = durationMs / intervalMs;
+
+    std::cout << "\033[1m"; // Bold on
+    for (int i = 0; i < totalSteps; ++i)
+    {
+        std::cout << "\r" << message << " " << spinner[spinnerIndex] << std::flush;
+        spinnerIndex = (spinnerIndex + 1) % 4;
+        std::this_thread::sleep_for(std::chrono::milliseconds(intervalMs));
+    }
+    std::cout << "\033[0m" << std::endl; // Reset
+}
+
+void CBowlingGame::showDotAnimation(const std::string &message, int durationMs, int intervalMs)
+{
+    int totalSteps = durationMs / intervalMs;
+    int dotCount = 0;
+
+    std::cout << "\033[1m"; // Bold on
+    for (int i = 0; i < totalSteps; ++i)
+    {
+        dotCount = (dotCount % 3) + 1;
+        std::string dots(dotCount, '.');
+        std::cout << "\r" << message << dots << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(intervalMs));
+    }
+    std::cout << "\033[0m" << std::endl; // Reset
+}
+
+bool CBowlingGame::getYes(const std::string &lstrPrompt)
+{
+    char lchChoice;
+    while (true)
+    {
+        std::cout << lstrPrompt << " (y/n): ";
+        std::cin >> lchChoice;
+        lchChoice = std::tolower(lchChoice);
+        if ('y' == lchChoice)
+            return true;
+        if ('n' == lchChoice)
+            return false;
+
+        std::cout << "Please enter 'y' or 'n'." << std::endl;
+    }
+}
+
+std::shared_ptr<CBowlingGame> CBowlingGame::getInstance()
+{
+    if (!m_pCBwlngGame)
+    {
+        m_pCBwlngGame = std::shared_ptr<CBowlingGame>(new CBowlingGame());
+    }
+    return m_pCBwlngGame;
 }

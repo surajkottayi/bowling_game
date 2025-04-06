@@ -3,7 +3,7 @@ project("BowlingGame"
     VERSION 0.1
     LANGUAGES CXX
     DESCRIPTION
-    "A sw which calculates the score in a bowling game"
+    "A s/w which calculates the score in a bowling game"
 )
 set(CMAKE_CXX_STANDARD 17)
 file(GLOB_RECURSE SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)

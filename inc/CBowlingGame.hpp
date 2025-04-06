@@ -5,6 +5,13 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <chrono>
+#include <thread>
+#include <iostream>
+#include <iostream>
+#include <thread>
+#include <chrono>
+
 #define RESET "\033[0m"
 #define BOLD "\033[1m"
 #define RED "\033[31m"
@@ -28,23 +35,27 @@ class CBowlingGame
 {
 public:
     [[nodiscard]] static std::shared_ptr<CBowlingGame> getInstance();
+    void init();
+    void start(int &retFlag);
     ~CBowlingGame() = default;
 
-    void roll(int pins);
-    void printFirstRaw(int &liRollIndex) const;
-    void printScore() const;
-    void printFrameInfo(int &liRollIndex) const;
-    void printSecondRaw(int &liRollIndex, int &currentScore) const;
-    int getCurrentFrameIndex() const;
     void clear();
+    int getCurrentFrameIndex() const;
+    uint32_t &getFinalScore();
+    bool getYes(const std::string &lstrPrompt);
     bool &isAnotherRoll() const;
-    void setisAnotherRoll(bool) const;
-
+    void printScore(int liFrameNo) const;
     void setisAnotherRollHandled(bool lbRoll) const;
-    uint32_t& getFinalScore() ;
-    void setFinalScore(uint32_t&);
+    void roll(int pins);
 
 private:
+    void setFinalScore(uint32_t &);
+    void setisAnotherRoll(bool) const;
+    void showSpinner(const std::string &message, int durationMs, int intervalMs);
+    void showDotAnimation(const std::string &message, int durationMs, int intervalMs);
+    void printFirstRaw(int &liRollIndex) const;
+    void printSecondRaw(int &liRollIndex, int &currentScore) const;
+    void printFrameInfo(int liFrameNo, int &liRollIndex) const;
     int strikeBonus(int rollIndex) const;
     int spareBonus(int rollIndex) const;
     int sumOfBallsInFrame(int rollIndex) const;
